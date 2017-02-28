@@ -1,0 +1,787 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="cpp," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="《C++ Primer》笔记，整理关于函数重载与函数匹配的笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++ 函数重载与函数匹配">
+<meta property="og:url" content="https://dotlive.github.io/function-overload-and-match/index.html">
+<meta property="og:site_name" content="潮起，潮落">
+<meta property="og:description" content="《C++ Primer》笔记，整理关于函数重载与函数匹配的笔记。">
+<meta property="og:updated_time" content="2017-02-28T11:17:08.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++ 函数重载与函数匹配">
+<meta name="twitter:description" content="《C++ Primer》笔记，整理关于函数重载与函数匹配的笔记。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://dotlive.github.io/function-overload-and-match/"/>
+
+
+
+
+
+  <title> C++ 函数重载与函数匹配 | 潮起，潮落 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">潮起，潮落</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Dotlive's Blog</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://dotlive.github.io/function-overload-and-match/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dotlive">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="潮起，潮落">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                C++ 函数重载与函数匹配
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2009-12-17T00:00:00+08:00">
+                2009-12-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Program/" itemprop="url" rel="index">
+                    <span itemprop="name">Program</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/function-overload-and-match/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="function-overload-and-match/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>《C++ Primer》笔记，整理关于函数重载与函数匹配的笔记。</p>
+<a id="more"></a>
+<h2 id="函数重载"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a)</span></span>; <span class="comment">//原函数</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">double</span> a)</span></span>; <span class="comment">//正确：形参类型不同</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span>; <span class="comment">// 正确：形参个数不同</span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a)</span></span>; <span class="comment">//错误：只有返回类型不同</span></div><div class="line"></div><div class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> int32;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(int32 a)</span></span>; <span class="comment">//与原函数等价：形参类型相同</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> a)</span></span>; <span class="comment">//与原函数等价：顶层 const 将被忽略</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>; <span class="comment">//与原函数等价：只是省略了形参名字</span></div></pre></td></tr></table></figure>
+<p><strong>函数重载有如下的规则：</strong></p>
+<ul>
+<li>名字相同，形参类型不一样。</li>
+<li>不允许两个函数除了返回类型外其他所有的要素都相同。</li>
+<li>顶层<code>const</code>的形参无法和没有顶层<code>const</code>的形参区分。</li>
+</ul>
+<p>其中返回类型不同时编译时会出错，而类型别名、项层<code>const</code>、省略形参名字只是重复声明而已，只要不定义，编译就不会出错，比如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//只定义了其中一个</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> a)</span> </span>&#123;&#125;</div></pre></td></tr></table></figure>
+<h2 id="函数匹配"><a href="#函数匹配" class="headerlink" title="函数匹配"></a>函数匹配</h2><h3 id="名字查找"><a href="#名字查找" class="headerlink" title="名字查找"></a>名字查找</h3><p>函数匹配的第一步便是<strong>名字查找（name lookup）</strong>，确定<strong>候选函数</strong>。</p>
+<p>名字查找有两方面：</p>
+<ul>
+<li>常规查找（normal lookup）</li>
+<li>实参决定的查找（argument-dependent lookup，ADL）</li>
+</ul>
+<p>所有函数调用都会进行常规查找，只有函数的实参包括类类型对象或指向类类型对象的指针/引用的时候，才会进行实参决定的查找。</p>
+<p><strong>常规查找</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a)</span></span>;	<span class="comment">//1</span></div><div class="line"><span class="keyword">namespace</span> N</div><div class="line">&#123;</div><div class="line">	<span class="comment">//作用域</span></div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span> </span>&#123;&#125;	<span class="comment">//2</span></div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">double</span> a)</span> </span>&#123;&#125;	<span class="comment">//3</span></div><div class="line">	...</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span></span></div><div class="line">	&#123;</div><div class="line">		func(); <span class="comment">//候选函数为函数2和3</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">using</span> ::func; <span class="comment">//将函数1加入当前作用域</span></div><div class="line">		func(); <span class="comment">//候选函数为函数1</span></div><div class="line">	&#125;</div><div class="line">	...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从函数被调用的局部作用域开始，逐渐向上层寻找被调用的名字，一旦找到就停止向上寻找，将找到的所有名字加入候选函数。</p>
+<p>此外，using语句可以将其他作用域的名字引用到当前作用域。</p>
+<p><strong>ADL查找</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span> </span>&#123;&#125; <span class="comment">//1</span></div><div class="line"><span class="comment">//第一个实参所在命名空间</span></div><div class="line"><span class="keyword">namespace</span> Name1 &#123;</div><div class="line">    <span class="keyword">class</span> T &#123;</div><div class="line">        <span class="function"><span class="keyword">friend</span> <span class="keyword">void</span> <span class="title">func</span><span class="params">(T&amp;)</span> </span>&#123;&#125; <span class="comment">//2</span></div><div class="line">    &#125;;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(T)</span> </span>&#123;&#125; <span class="comment">//3</span></div><div class="line">&#125;</div><div class="line"><span class="comment">//第二个实参的间接父类所在命名空间</span></div><div class="line"><span class="keyword">namespace</span> Name00 &#123;</div><div class="line">    <span class="keyword">class</span> T00 &#123;</div><div class="line">        <span class="function"><span class="keyword">friend</span> <span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span> </span>&#123;&#125; <span class="comment">//4</span></div><div class="line">    &#125;;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span> </span>&#123;&#125; <span class="comment">//5</span></div><div class="line">&#125;</div><div class="line"><span class="comment">//第二个实参父类所在命名空间</span></div><div class="line"><span class="keyword">namespace</span> Name0 &#123;</div><div class="line">    <span class="keyword">class</span> T0:<span class="keyword">public</span> Name00::T00 &#123;</div><div class="line">        <span class="function"><span class="keyword">friend</span> <span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span> </span>&#123;&#125; <span class="comment">//6</span></div><div class="line">    &#125;;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span> </span>&#123;&#125; <span class="comment">//7</span></div><div class="line">&#125;</div><div class="line"><span class="comment">//第二个实参所在命名空间</span></div><div class="line"><span class="keyword">namespace</span> Name2 &#123;</div><div class="line">    <span class="keyword">class</span> T:<span class="keyword">public</span> Name0::T0 &#123;</div><div class="line">        <span class="function"><span class="keyword">friend</span> <span class="keyword">void</span> <span class="title">func</span><span class="params">(T&amp;)</span> </span>&#123;&#125; <span class="comment">//8</span></div><div class="line">    &#125;;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(T)</span> </span>&#123;&#125; <span class="comment">//9</span></div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    Name1::T t1;</div><div class="line">    Name2::T t2;</div><div class="line">    <span class="comment">//9个函数全是候选函数</span></div><div class="line">    <span class="comment">//第1个函数是normal lookup找到的</span></div><div class="line">    <span class="comment">//后8个函数全是argument-dependent lookup找到的</span></div><div class="line">    func(&amp;t1,t2);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从第一个类类型参数开始，依次遍历所有类类型参数。对于每一个参数，进入其类型定义所在的作用域（类内友元函数也包括在内），并依次进入其基类、间接基类……定义所在的作用域，查找同名函数，并加入候选函数。</p>
+<p><strong>注意：</strong>在继承体系中上升的过程中，不会因为找到同名函数就停止上升，这不同于常规查找。</p>
+<p>类中的运算符重载也遵循 ADL 查找，其候选函数集既包括成员函数，也应该包括非成员函数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">namespace</span> N</div><div class="line">&#123;</div><div class="line">	<span class="keyword">class</span> A</div><div class="line">	&#123;</div><div class="line">	<span class="keyword">public</span>:</div><div class="line">		<span class="keyword">void</span> <span class="keyword">operator</span>+(<span class="keyword">int</span> a) &#123;&#125; <span class="comment">//1</span></div><div class="line">	&#125;;</div><div class="line">	<span class="keyword">void</span> <span class="keyword">operator</span>+(A &amp;a, <span class="keyword">int</span> a) &#123;&#125; <span class="comment">//2</span></div><div class="line">&#125;;</div><div class="line"><span class="keyword">void</span> <span class="keyword">operator</span>+(A &amp;a, <span class="keyword">int</span> a) &#123;&#125; <span class="comment">//3</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">	N::A a;</div><div class="line">	a + <span class="number">1</span>; <span class="comment">//1、2、3都是候选函数</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="确定可行函数"><a href="#确定可行函数" class="headerlink" title="确定可行函数"></a>确定可行函数</h3><p>第二步便是从候选函数中选出可行函数，选择的标准如下：</p>
+<ul>
+<li>形参数量与本次调用提供的实参数量相等</li>
+<li>每个实参的类型与对应的形参类型相同，或者能转换成形参类型</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//以下为候选函数</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">double</span> b)</span> </span>&#123;&#125; <span class="comment">//可行函数</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;&#125; <span class="comment">//可行函数：实参可转化成形参类型</span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">double</span> b)</span> </span>&#123;&#125; <span class="comment">//可行函数</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a)</span> </span>&#123;&#125; <span class="comment">//非可行函数：形参数量不匹配</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b[])</span> </span>&#123;&#125; <span class="comment">//非可行函数：实参不能转换成形参</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">	func(<span class="number">1</span>, <span class="number">0.1</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="寻找最佳匹配"><a href="#寻找最佳匹配" class="headerlink" title="寻找最佳匹配"></a>寻找最佳匹配</h3><p>从可行函数中选择最匹配的函数，如果有多个形参，则最佳匹配条件为：</p>
+<ul>
+<li>该函数每个实参的匹配都不劣于其他可行函数需要的匹配。</li>
+<li>至少有一个实参的匹配优于其他可行函数提供的匹配。</li>
+</ul>
+<p>否则，发生二义性调用错误。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//可行函数</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">float</span> b)</span> </span>&#123;&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">	func(<span class="number">1</span>, <span class="number">0.1</span>); <span class="comment">//二义性错误：double 向 int 的转换与向 float 的转换一样好</span></div><div class="line">	func(<span class="number">1</span>, <span class="number">1</span>); <span class="comment">//调用 void func(int a, int b)</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>为了确定最佳匹配，实参类型到形参类型的转换等级如下：</p>
+<ol>
+<li>精确匹配：<ul>
+<li>实参类型和形参类型相同。</li>
+<li>实参从数组类型或函数类型转换成对应的指针类型。</li>
+<li>向实参添加顶层<code>const</code>或者从实参中删除顶层<code>const</code>。</li>
+</ul>
+</li>
+<li>通过<code>const</code>转换实现的匹配。</li>
+<li>通过类型提升实现的匹配。</li>
+<li>通过算术类型转换或指针转换实现的匹配。</li>
+<li>通过类类型转换实现的匹配。</li>
+</ol>
+<p><em>一般不会存在这个阶段不会同时存在两个以上的精确匹配，因为两个精确的匹配在本质上是等价的，在定义重载函数时，编译器可能就报出重定义的错误了。</em></p>
+<p>挑几个重点的来详细说一下。</p>
+<p><strong>指针转换实现的匹配</strong></p>
+<ul>
+<li>0 或<code>nullptr</code>能转换成任意指针类型。</li>
+<li><code>T *</code> 能转换成 <code>void *</code>，<code>const void *</code>转换成<code>const void*</code>。</li>
+<li>派生类向基类类型的转换。</li>
+<li>函数与函数指针的形参类型必须精确匹配。</li>
+</ul>
+<p><strong>类类型转换实现的匹配</strong></p>
+<p>两个类型提供相同的类型转换将产生二义性问题。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> B;</div><div class="line"><span class="keyword">struct</span> A</div><div class="line">&#123;</div><div class="line">	A() = <span class="keyword">default</span>;</div><div class="line">	A(<span class="keyword">const</span> B&amp;);	<span class="comment">//把一个 B 转换成 A</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> B</div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">operator</span> <span class="title">A</span><span class="params">()</span> <span class="keyword">const</span></span>; <span class="comment">// 也是把一个 B 转换成 A</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function">A <span class="title">f</span><span class="params">(<span class="keyword">const</span> A&amp;)</span></span>;</div><div class="line"></div><div class="line">B b;</div><div class="line">A a = f(b); <span class="comment">//二义性错误：f(B::operator A()) 还是 f(A::A(const B&amp;))</span></div><div class="line"></div><div class="line">A a1 = f(b.<span class="keyword">operator</span> A()); <span class="comment">//正确：使用 B 的类型转换运算</span></div><div class="line">A a2 = f(A(b)); <span class="comment">//正确：使用 A 的构造函数</span></div></pre></td></tr></table></figure>
+<p>类当中定义了多个参数都是算术类型的构造函数或类型转换运算符，也会产生二义性问题。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> A</div><div class="line">&#123;</div><div class="line">	A(<span class="keyword">int</span> = <span class="number">0</span>);</div><div class="line">	A(<span class="keyword">double</span>);</div><div class="line">	<span class="function"><span class="keyword">operator</span> <span class="title">int</span><span class="params">()</span> <span class="keyword">const</span></span>;</div><div class="line">	<span class="function"><span class="keyword">operator</span> <span class="title">double</span><span class="params">()</span> <span class="keyword">const</span></span>;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">long</span> <span class="keyword">double</span>)</span></span>;</div><div class="line"></div><div class="line">A a;</div><div class="line">f(a); <span class="comment">//二义性错误：f(A::operator int()) 还是 f(A::operator double())？</span></div><div class="line"></div><div class="line"><span class="keyword">long</span> l;</div><div class="line"><span class="function">A <span class="title">a2</span><span class="params">(l)</span></span>; <span class="comment">//二义性错误：A::A(int) 还是 A::A(double)？</span></div><div class="line"></div><div class="line"><span class="keyword">short</span> s;</div><div class="line"><span class="function">A <span class="title">a3</span><span class="params">(s)</span></span>; <span class="comment">//正确：使用 A::A(int)</span></div></pre></td></tr></table></figure>
+<p>当我们使用两个用户定义的类型转换时，如果转换函数之前或之后存在标准类型转换，则标准类型转换将决定最佳匹配到底是哪个。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/cpp/" rel="tag"># cpp</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/function-matching-and-argument-deduction/" rel="next" title="C++ 函数匹配及实参推断">
+                <i class="fa fa-chevron-left"></i> C++ 函数匹配及实参推断
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/data-structure-alignmen/" rel="prev" title="字节对齐">
+                字节对齐 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="function-overload-and-match/"
+           data-title="C++ 函数重载与函数匹配" data-url="https://dotlive.github.io/function-overload-and-match/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Dotlive" />
+          <p class="site-author-name" itemprop="name">Dotlive</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#函数重载"><span class="nav-number">1.</span> <span class="nav-text">函数重载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数匹配"><span class="nav-number">2.</span> <span class="nav-text">函数匹配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#名字查找"><span class="nav-number">2.1.</span> <span class="nav-text">名字查找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#确定可行函数"><span class="nav-number">2.2.</span> <span class="nav-text">确定可行函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#寻找最佳匹配"><span class="nav-number">2.3.</span> <span class="nav-text">寻找最佳匹配</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2008 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dotlive</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dotlive"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
