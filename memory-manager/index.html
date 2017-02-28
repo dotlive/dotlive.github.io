@@ -1,0 +1,753 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="cpp,c," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="在解决生活中的很多问题时，实际接触处理对象的容量以前，并不容易精确地确定问题的规模。比如学生管理系统中人名最长只能录入4个汉字，而今年的新生中有几个少数民族的学生，名字至少都是七八个汉字……生活中这样的例子很多。对于类似的问题，在软件开发中就需要动态分配和释放内存空间的方法来解决。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存管理">
+<meta property="og:url" content="https://dotlive.github.io/memory-manager/index.html">
+<meta property="og:site_name" content="潮起，潮落">
+<meta property="og:description" content="在解决生活中的很多问题时，实际接触处理对象的容量以前，并不容易精确地确定问题的规模。比如学生管理系统中人名最长只能录入4个汉字，而今年的新生中有几个少数民族的学生，名字至少都是七八个汉字……生活中这样的例子很多。对于类似的问题，在软件开发中就需要动态分配和释放内存空间的方法来解决。">
+<meta property="og:updated_time" content="2017-02-28T16:26:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="内存管理">
+<meta name="twitter:description" content="在解决生活中的很多问题时，实际接触处理对象的容量以前，并不容易精确地确定问题的规模。比如学生管理系统中人名最长只能录入4个汉字，而今年的新生中有几个少数民族的学生，名字至少都是七八个汉字……生活中这样的例子很多。对于类似的问题，在软件开发中就需要动态分配和释放内存空间的方法来解决。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://dotlive.github.io/memory-manager/"/>
+
+
+
+
+
+  <title> 内存管理 | 潮起，潮落 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">潮起，潮落</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Dotlive's Blog</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://dotlive.github.io/memory-manager/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dotlive">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="潮起，潮落">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                内存管理
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2011-02-28T00:00:00+08:00">
+                2011-02-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Program/" itemprop="url" rel="index">
+                    <span itemprop="name">Program</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/memory-manager/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="memory-manager/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在解决生活中的很多问题时，实际接触处理对象的容量以前，并不容易精确地确定问题的规模。比如学生管理系统中人名最长只能录入4个汉字，而今年的新生中有几个少数民族的学生，名字至少都是七八个汉字……生活中这样的例子很多。对于类似的问题，在软件开发中就需要动态分配和释放内存空间的方法来解决。</p>
+<a id="more"></a>
+<p><strong>创建新对象需要完成的工作包括：</strong></p>
+<ul>
+<li>为对象分配内存</li>
+<li>调用构造函数来初始新分配的内</li>
+</ul>
+<hr>
+<h2 id="内存的分类"><a href="#内存的分类" class="headerlink" title="内存的分类"></a>内存的分类</h2><h3 id="静态存储区"><a href="#静态存储区" class="headerlink" title="静态存储区"></a>静态存储区</h3><p>程序开始以前就可以分配，且在程序整个运行期间都存在。</p>
+<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>可以看作是一摞卡片，最上面的卡片表示程序的当前作用域，这往往就是当前正在执行的函数。当前函数中声明的所有变量都置于栈顶帧中，即占用栈顶帧的内存，这就相当于一摞卡片中最上面的一张卡片。如果当前函数调用了另一个函数，举例来说，当前函数foo()调用了另一个函数bar()，就会在这摞卡片上再加一个新的卡片，这样bar()就有了自己的栈帧（stack frame）以供使用。从foo()传递到bar()的所有参数都会从foo()栈帧复制到bar()栈帧中。（注：栈帧很有意义，因为栈帧可以为每个函数提供一个独立的内存工作区。如果一个变量是在foo()栈帧中声明的，那么调用bar()函数不会对它带来改变，除非你专门要求修改这个变量。另外，foo()函数运行结束时，栈帧即消失，该函数中声明的所有变量都不会再占用内存了）。</p>
+<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p>一段完全独立于当前函数或者栈帧的内存区。如果一个函数中声明了一些变量，而且希望当这个函数完成时其中声明的变量仍然存在，就可以将这些变量置于堆中。<br>堆和栈相比，没那么清晰的结构性。可以把堆可作是一“堆”小玩艺。程序可以在任何时间向这个“堆”增加新的东西，或者修改堆中已有的东西。</p>
+<hr>
+<h2 id="内存分配方式"><a href="#内存分配方式" class="headerlink" title="内存分配方式"></a>内存分配方式</h2><h3 id="从静态存储区域分配"><a href="#从静态存储区域分配" class="headerlink" title="从静态存储区域分配"></a>从静态存储区域分配</h3><p>内存在程序编译的时候就已经分配好，这块内存在程序的整个运行期间都存在。例如全局变量，static变量。</p>
+<h3 id="在栈上创建"><a href="#在栈上创建" class="headerlink" title="在栈上创建"></a>在栈上创建</h3><p>在执行函数时，函数内局部变量的存储单元都可以在栈上创建，函数执行结束时这些存储单元自动被释放。栈内存分配运算内置于处理器的指令集中，效率很高，但是分配的内存容量有限。</p>
+<h3 id="从堆上分配（动态内存分配）"><a href="#从堆上分配（动态内存分配）" class="headerlink" title="从堆上分配（动态内存分配）"></a>从堆上分配（动态内存分配）</h3><p>程序在运行的时候用malloc或new申请任意多少的内存，程序员自己负责在何时用free或delete释放内存。动态内存的生存期由我们决定，使用非常灵活，但问题也最多。</p>
+<hr>
+<h2 id="动态内存分配方式比较"><a href="#动态内存分配方式比较" class="headerlink" title="动态内存分配方式比较"></a>动态内存分配方式比较</h2><h3 id="malloc-free"><a href="#malloc-free" class="headerlink" title="malloc / free"></a>malloc / free</h3><p><strong>必须要指明分配的空间的大小</strong><br>容易犯错的情况：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> ARRAY_SIZE 100</span></div><div class="line"><span class="keyword">int</span> *pa = (<span class="keyword">int</span> *)<span class="built_in">malloc</span>(ARRAY_SIZE);</div><div class="line">pa[<span class="number">99</span>] = <span class="number">0</span>;</div></pre></td></tr></table></figure></p>
+<p>这个错误较数组越界更为隐藏。程序原意是为一个容量为<strong>100个整型</strong>数组分配内存，但上面的代码仅仅分配了<strong>100个字节</strong>。正确的分配方式如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> ARRAY_SIZE 100</span></div><div class="line"><span class="keyword">int</span> *pa = (<span class="keyword">int</span> *)<span class="built_in">malloc</span>( ARRAY_SIZE * <span class="keyword">sizeof</span>(<span class="keyword">int</span>) );</div><div class="line">pa[<span class="number">99</span>] = <span class="number">0</span>;</div></pre></td></tr></table></figure></p>
+<p><strong>对类型缺乏检查和限制</strong><br>malloc总是返回一个void指针，如上例所示。</p>
+<h3 id="new-delete"><a href="#new-delete" class="headerlink" title="new / delete"></a>new / delete</h3><ul>
+<li>new 和 delete 其实调用了 malloc 和 free 函数来<strong>分配</strong>和<strong>释放</strong>内存。但 new 除了分配内存外，还会调用构造函数。同理，delete 会调用类的析构函数。</li>
+<li>new 创建出来的是带类型信息的，这使得 new 比 malloc 更加可靠。</li>
+</ul>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p><strong>不要将 malloc/free 和 new/delete 混用</strong><br><strong>分配和释放的行为要统一、数量匹配</strong><br>分配过程如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Point pInt = <span class="keyword">new</span> Point[<span class="number">100</span>];</div></pre></td></tr></table></figure></p>
+<p>释放过程：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">delete</span> pInt;      <span class="comment">// error: memory leak</span></div><div class="line"><span class="keyword">delete</span> [] pInt;   <span class="comment">// right</span></div></pre></td></tr></table></figure></p>
+<p>第一种方式，只释放了数组中的第一个对象；<br>第二种方式，空的方括号用于告诉编辑器产生<strong>从数组创建时存放的地方取回数组中对象数量</strong>的代码，并为数组中所有的对象调用析构函数；</p>
+<hr>
+<h2 id="运用"><a href="#运用" class="headerlink" title="运用"></a>运用</h2><p>分别用上面说的两种动态内存管理方式来分配与释放二维数组的内存空间：</p>
+<p>两种方法：<br>方法1、先定义一个一维数组的类型，然后再用该类型定义一个一维数组（实际上已经成为二维的），相当于递归定义：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> <span class="built_in">array</span>[COL];    <span class="comment">//使用typedef定义一个具有COL个元素的数组类型</span></div><div class="line"><span class="built_in">array</span> *a;  　　　　　　　    <span class="comment">//定义二维数组,与一维数组相同</span></div><div class="line">a = <span class="keyword">new</span> <span class="built_in">array</span>[row]; 　　　　<span class="comment">//为该一维数组（实际上二维）申请空间</span></div></pre></td></tr></table></figure></p>
+<p>该方法定义的动态二维数组的释放只需以下语句即可：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">delete</span>[] a;</div><div class="line">a = <span class="literal">NULL</span>;</div></pre></td></tr></table></figure></p>
+<p>方法2、使用数组指针，分配一个指针数组，将其首地址保存在b中，然后再为指针数组的每个元素分配一个数组<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> **b=<span class="keyword">new</span> <span class="keyword">int</span>*[row];      <span class="comment">//分配一个指针数组，将其首地址保存在b中</span></div><div class="line"><span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;row; ++i)        <span class="comment">//为指针数组的每个元素分配一个数组</span></div><div class="line">    b[i]=<span class="keyword">new</span> <span class="keyword">int</span>[col];</div></pre></td></tr></table></figure></p>
+<p>该方法定义的动态二维数组的释放需先释放指针数组的每个元素指向的数组，然后再释放该指针数组：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;row;i++)</div><div class="line">&#123;</div><div class="line">    <span class="keyword">delete</span> [col]b[i];</div><div class="line">    b[i]=<span class="literal">NULL</span>;</div><div class="line">&#125;</div><div class="line"><span class="keyword">delete</span> [row]b;</div><div class="line">b = <span class="literal">NULL</span>;</div></pre></td></tr></table></figure></p>
+<p>完整代码如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;conio.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> ROW 4    <span class="comment">//行数</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> COL 6    <span class="comment">//列数</span></span></div><div class="line"></div><div class="line"><span class="comment">// 使用typedef定义一个具有ROW个元素的数组类型</span></div><div class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> <span class="built_in">array</span>[COL];</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> row=ROW;    <span class="comment">//二维数组的行数</span></div><div class="line">    <span class="keyword">int</span> col=COL;    <span class="comment">//二维数组的列数</span></div><div class="line">    <span class="keyword">int</span> i,j,n=<span class="number">1</span>;</div><div class="line"></div><div class="line">    <span class="comment">///////////////////////////////////////////////////////////////////////////</span></div><div class="line">    <span class="comment">//定义二维数组,与一维数组相同</span></div><div class="line">    <span class="built_in">array</span> *a;</div><div class="line">    a=<span class="keyword">new</span> <span class="built_in">array</span>[row];</div><div class="line"></div><div class="line">    <span class="comment">///////////////////////////////////////////////////////////////////////////</span></div><div class="line">    <span class="comment">//赋值</span></div><div class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;row;i++)</div><div class="line">        <span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;col;j++)</div><div class="line">            a[i][j]=n++;</div><div class="line"></div><div class="line">    <span class="built_in">cout</span> &lt;&lt;<span class="string">"solution 1:"</span>&lt;&lt;<span class="built_in">endl</span>;</div><div class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;row;i++)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;col;j++)</div><div class="line">            <span class="built_in">cout</span>&lt;&lt;a[i][j]&lt;&lt;<span class="string">"\t"</span>;</div><div class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="built_in">endl</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">///////////////////////////////////////////////////////////////////////////</span></div><div class="line">    <span class="comment">//释放</span></div><div class="line">    <span class="comment">//或者delete[row] a; 或者delete[row]a; 或者delete [row]a;</span></div><div class="line">    <span class="comment">//或者delete[] a; 或者delete[]a; 或者delete []a; 或者delete [] a;</span></div><div class="line">    <span class="keyword">delete</span>[] a;</div><div class="line">    a=<span class="literal">NULL</span>;</div><div class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="built_in">endl</span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">///////////////////////////////////////////////////////////////////////////</span></div><div class="line">    <span class="comment">//使用数组指针。分配一个指针数组,其首地址保存在b中</span></div><div class="line">    <span class="keyword">int</span> **b=<span class="keyword">new</span> <span class="keyword">int</span>*[row];</div><div class="line">    <span class="comment">//为指针数组的每个元素分配一个数组</span></div><div class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;row;i++)</div><div class="line">        b[i]=<span class="keyword">new</span> <span class="keyword">int</span>[col];</div><div class="line"></div><div class="line">    <span class="comment">///////////////////////////////////////////////////////////////////////////</span></div><div class="line">    <span class="comment">//赋值</span></div><div class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;row;i++)</div><div class="line">        <span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;col;j++)</div><div class="line">            b[i][j]=n++;</div><div class="line"></div><div class="line">    <span class="built_in">cout</span> &lt;&lt;<span class="string">"solution 2:"</span>&lt;&lt;<span class="built_in">endl</span>;</div><div class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;row;i++)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;col;j++)</div><div class="line">            <span class="built_in">cout</span>&lt;&lt;b[i][j]&lt;&lt;<span class="string">"\t"</span>;</div><div class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="built_in">endl</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">///////////////////////////////////////////////////////////////////////////</span></div><div class="line">    <span class="comment">//释放</span></div><div class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;row;i++)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">delete</span> [col]b[i];</div><div class="line">        b[i]=<span class="literal">NULL</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">delete</span> [row]b;</div><div class="line">    b=<span class="literal">NULL</span>;</div><div class="line"></div><div class="line">    <span class="comment">///////////////////////////////////////////////////////////////////////////</span></div><div class="line">    getch();</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/cpp/" rel="tag"># cpp</a>
+          
+            <a href="/tags/c/" rel="tag"># c</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/data-structure-alignmen/" rel="next" title="字节对齐">
+                <i class="fa fa-chevron-left"></i> 字节对齐
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/helloworld-compile-and-link/" rel="prev" title="Hello World 的编译链接概述">
+                Hello World 的编译链接概述 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="memory-manager/"
+           data-title="内存管理" data-url="https://dotlive.github.io/memory-manager/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Dotlive" />
+          <p class="site-author-name" itemprop="name">Dotlive</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#内存的分类"><span class="nav-number">1.</span> <span class="nav-text">内存的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#静态存储区"><span class="nav-number">1.1.</span> <span class="nav-text">静态存储区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈"><span class="nav-number">1.2.</span> <span class="nav-text">栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆"><span class="nav-number">1.3.</span> <span class="nav-text">堆</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存分配方式"><span class="nav-number">2.</span> <span class="nav-text">内存分配方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#从静态存储区域分配"><span class="nav-number">2.1.</span> <span class="nav-text">从静态存储区域分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在栈上创建"><span class="nav-number">2.2.</span> <span class="nav-text">在栈上创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从堆上分配（动态内存分配）"><span class="nav-number">2.3.</span> <span class="nav-text">从堆上分配（动态内存分配）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态内存分配方式比较"><span class="nav-number">3.</span> <span class="nav-text">动态内存分配方式比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#malloc-free"><span class="nav-number">3.1.</span> <span class="nav-text">malloc / free</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#new-delete"><span class="nav-number">3.2.</span> <span class="nav-text">new / delete</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#说明"><span class="nav-number">3.3.</span> <span class="nav-text">说明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运用"><span class="nav-number">4.</span> <span class="nav-text">运用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2008 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dotlive</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dotlive"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
